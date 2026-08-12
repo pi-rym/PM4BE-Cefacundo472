@@ -1,15 +1,44 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Put, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { Product } from './products.repository';
+import { Products } from './entities/products.entity';
 
 @Controller('products')
 export class ProductsController {
-    constructor(private readonly productsService:ProductsService){}
+  constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-    getAllProducts(): Product[] {
-        return this.productsService.getAllProducts();
+  getAllProducts(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    if (page && limit)
+      return this.productsService.getAllProducts(
+        Number(page),
+        Number(limit),
+      );
+    return this.productsService.getAllProducts(
+      Number(1),
+      Number(5),
+    );
+  }
 
-    }
-        
+  @Get('seeder')
+  addProducts() {
+    return this.productsService.addProducts();
+  }
+
+  @Get(':id')
+  getProductById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productsService.getProductById(id);
+  }
+
+  @Put(':id')
+  updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() productNewData: Products) {
+    return this.productsService.updateProduct(id, productNewData);
+  }
+
+  @Delete(':id')
+  deleteProduct(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productsService.deleteProduct(id);
+  }
 }

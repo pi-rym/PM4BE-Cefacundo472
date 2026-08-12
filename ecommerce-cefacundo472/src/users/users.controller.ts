@@ -1,61 +1,45 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './users.repository';
+import { Users } from './entities/users.entity';
 import { AuthGuard } from '../auth/guards/auth.guard';
+import { CreateUserDto } from './dto/users.dto';
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService:UsersService){}
+    constructor(private readonly usersService: UsersService) {}
 
-      @Get()
-      @HttpCode(200)
-      @UseGuards(AuthGuard)
-      getAllusers(@Query('page') page?: string,@Query('limit') limit?: string): User[] {
-        
+    @Get()
+    @UseGuards(AuthGuard)
+    getAllusers(@Query('page') page?: string, @Query('limit') limit?: string) {
         const pageNum = Number(page);
         const limitNum = Number(limit);
 
         const validPage = !isNaN(pageNum) && pageNum > 0 ? pageNum : 1;
         const validLimit = !isNaN(limitNum) && limitNum > 0 ? limitNum : 5;
 
-
-        
-
-
-        
         return this.usersService.getAllUsers(validPage, validLimit);
-      }
+    }
 
-     @Get(':id')
-     getUserById(@Param('id') id: string){
-      return this.usersService.getUserById(id);
-     }
+    @Get(':id')
+    @UseGuards(AuthGuard)
+    getUserById(@Param('id', ParseUUIDPipe) id: string) {
+        return this.usersService.getUserById(id);
+    }
 
-     @Post()
-     addUsser(@Body() newUser: any ){
-        if(!newUser.email) return 'Email es obligatorio';
-        if(!newUser.name) return 'Nombre es obligatorio';
-      
-       
+    @Post()
+    addUsser(@Body() newUser: CreateUserDto) {
+        return this.usersService.addUser(newUser);
+    }
 
-      return this.usersService.addUser(newUser);
-     }
+    @Put(':id')
+    @UseGuards(AuthGuard)
+    updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() userNewData: any) {
+        return this.usersService.updateUser(id, userNewData);
+    }
 
-
-     @Put(':id')
-     updateUser(@Param('id') id: string, @Body() userNewData: any ) {
-      return this.usersService.updateUser(id, userNewData);
-     }
-
-
-     @Delete(':id')
-     deleteUser(@Param('id') id: string) {
-      return this.usersService.deleteUser(id); 
-     }
-
-
+    //@Delete(':id')
+    //@UseGuards(AuthGuard)
+    //deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+    //    return this.usersService.deleteUser(id); 
+    //}
 }
-
-
-
-

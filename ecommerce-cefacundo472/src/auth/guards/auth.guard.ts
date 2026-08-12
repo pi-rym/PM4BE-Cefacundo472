@@ -6,24 +6,19 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-
     const request = context.switchToHttp().getRequest();
+    const authHeader = request.headers['authorization'];
 
-    const authHeader = request.headers['authorization']
-    if(!authHeader) return false;
+    if (!authHeader) return false;
 
-    const auth = authHeader.split(' ')[1];
+   
+    const [type, credentials] = authHeader.split(' ');
 
-    if(auth !== 'EsteEsElToken' ) return false;
+    if (type !== 'Basic' || !credentials) return false;
 
+    const [email, password] = credentials.split(':');
 
-
-    
-    
-
-
-
-
+    if (!email || !password) return false;
 
     return true;
   }

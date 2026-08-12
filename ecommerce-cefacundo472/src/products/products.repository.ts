@@ -1,70 +1,92 @@
-import { Injectable } from "@nestjs/common";
-
-
-export interface Product {
-    id:number;
-
-   name: string;
-
-   description: string;
-
-   price: number;
-
-   stock: number;
-
-   imgUrl: string;
-}
-
-
-export const products:Product[] = [
-  {
-    id: 1,
-    name: "Memoria RAM 16GB DDR4",
-    description: "Módulo de memoria RAM SODIMM de 16GB a 3200MHz para notebook.",
-    price: 65.99,
-    stock: 15,
-    imgUrl: "https://example.com/images/ram-16gb.jpg"
-  },
-  {
-    id: 2,
-    name: "Disco SSD NVMe M.2 1TB",
-    description: "Unidad de estado sólido de alta velocidad de lectura y escritura.",
-    price: 89.50,
-    stock: 8,
-    imgUrl: "https://example.com/images/ssd-1tb.jpg"
-  },
-  {
-    id: 3,
-    name: "Batería de Repuesto para Laptop",
-    description: "Batería de iones de litio de alta durabilidad compatible con múltiples modelos.",
-    price: 45.00,
-    stock: 0,
-    imgUrl: "https://example.com/images/battery.jpg"
-  },
-  {
-    id: 4,
-    name: "Pantalla LCD/LED 15.6 pulgadas FHD",
-    description: "Display de reemplazo con resolución Full HD y conector de 30 pines.",
-    price: 110.00,
-    stock: 5,
-    imgUrl: "https://example.com/images/screen-156.jpg"
-  },
-  {
-    id: 5,
-    name: "Cooler / Ventilador de CPU para Notebook",
-    description: "Disipador con ventilador integrado para refrigeración de procesador portátil.",
-    price: 22.99,
-    stock: 20,
-    imgUrl: "https://example.com/images/cooler.jpg"
-  }
-];
-
-
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Categories } from "../categories/entity/categories.entity";
+import { Products } from "./entities/products.entity";
+import { allProducts } from "../../utils/data";
+import { Repository } from "typeorm";
 
 @Injectable()
-export class ProductsRepository{
-    getAllProducts(): Product[] {
-        return products;
-    }
-}
+export class ProductsRepository {
+  constructor(
+    @InjectRepository(Products)
+    private ormProductsRepository: Repository<Products>,
+    @InjectRepository(Categories)
+    private ormCategoriesRepository: Repository<Categories>,
+  ){}
 
+  async getAllProducts(page: number, limit: number): Promise<Products[]>{
+     const skip = (page - 1) * limit;
+     const products = await this.ormProductsRepository.find({
+        relations:{
+          category:true,
+        },
+        skip: skip,
+        take: limit,
+     });
+     return products;
+  }
+  
+  async addProducts(): Promise<string> {
+    const categories = await this.ormCategoriesRepository.find();
+    
+    await Promise.all(
+      allProducts.map(async (element) => {
+        const category = categories.find(
+          (category) => category.name === element.category,
+        );
+
+        if (!category)
+          throw new NotFoundException(`La categoria ${element.category} no existe`);
+
+        const product = new Products();
+        product.name = element.name;
+        product.description = element.description;
+        product.price = element.price;
+        product.stock = element.stock;
+        product.category = category; 
+
+        await this.ormProductsRepository
+          .createQueryBuilder()
+          .insert()
+          .into(Products)
+          .values(product) 
+          .orUpdate(['description', 'price', 'imgUrl', 'stock'], ['name'])
+          .execute();
+      }),
+    );
+
+    return 'Productos agregados';
+  }
+
+  async getProductById(id: string): Promise<Products> {
+    const product = await this.ormProductsRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Producto con id ${id} no encontrado`);
+    }
+    return product;
+  }
+  
+  async updateProduct(
+    id: string,
+    productNewData: Products,
+  ): Promise<Products> {
+    const product = await this.ormProductsRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Producto con id ${id} no encontrado para actualizar`);
+    }
+
+    await this.ormProductsRepository.update(id, productNewData);
+    
+    return (await this.ormProductsRepository.findOneBy({ id }))!;
+  }
+
+  async deleteProduct(id: string): Promise<string> {
+    const product = await this.ormProductsRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Producto con id ${id} no encontrado para eliminar`);
+    }
+    
+    await this.ormProductsRepository.delete(id);
+    return product.id;
+  }
+}
