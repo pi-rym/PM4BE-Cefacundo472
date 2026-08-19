@@ -16,12 +16,6 @@ export class Categories {
   })
   name!: string;
 
-@OneToMany(() => Products, (product) => product.category)
-products!: Products[];
+  @OneToMany(() => Products, (product) => product.category)
+  products!: Products[];
 }
-
-
-
-
-
-

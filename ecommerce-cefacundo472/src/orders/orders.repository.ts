@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Orders } from './entities/orders.entity';
@@ -51,11 +55,15 @@ export class OrdersRepository {
         });
 
         if (!product) {
-          throw new NotFoundException(`Producto con id ${element.id} no encontrado`);
+          throw new NotFoundException(
+            `Producto con id ${element.id} no encontrado`,
+          );
         }
 
         if (product.stock <= 0) {
-          throw new BadRequestException(`El producto ${product.name} no tiene stock disponible`);
+          throw new BadRequestException(
+            `El producto ${product.name} no tiene stock disponible`,
+          );
         }
 
         return product;

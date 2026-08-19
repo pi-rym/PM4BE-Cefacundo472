@@ -1,25 +1,30 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Products } from './entities/products.entity';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Role } from '../common/roles.enum';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  getAllProducts(
-    @Query('page') page: string,
-    @Query('limit') limit: string,
-  ) {
+  getAllProducts(@Query('page') page: string, @Query('limit') limit: string) {
     if (page && limit)
-      return this.productsService.getAllProducts(
-        Number(page),
-        Number(limit),
-      );
-    return this.productsService.getAllProducts(
-      Number(1),
-      Number(5),
-    );
+      return this.productsService.getAllProducts(Number(page), Number(limit));
+    return this.productsService.getAllProducts(Number(1), Number(5));
   }
 
   @Get('seeder')
@@ -33,7 +38,12 @@ export class ProductsController {
   }
 
   @Put(':id')
-  updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() productNewData: Products) {
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  updateProduct(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() productNewData: Products,
+  ) {
     return this.productsService.updateProduct(id, productNewData);
   }
 

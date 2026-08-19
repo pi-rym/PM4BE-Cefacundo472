@@ -12,4 +12,4 @@ import { Categories } from '../categories/entity/categories.entity';
   providers: [ProductsService, ProductsRepository],
   exports: [TypeOrmModule, ProductsService, ProductsRepository],
 })
-export class ProductsModule {} 
+export class ProductsModule {}

@@ -4,17 +4,14 @@ import { CategoriesService } from './categories.service';
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
-  
+
   @Get()
-  getAllCategories(){
+  getAllCategories() {
     return this.categoriesService.getAllCategories();
   }
 
   @Get('seeder')
-  addCategories(){
+  addCategories() {
     return this.categoriesService.addCategories();
   }
-
-
-
 }

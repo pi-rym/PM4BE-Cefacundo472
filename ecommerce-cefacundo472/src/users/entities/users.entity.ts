@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Orders } from '../../orders/entities/orders.entity';
 
 @Entity({
@@ -25,7 +31,7 @@ export class Users {
 
   @Column({
     type: 'varchar',
-    length: 20,
+    length: 60,
     nullable: false,
   })
   password!: string;
@@ -55,10 +61,13 @@ export class Users {
     nullable: true,
   })
   city!: string;
- 
-
   
-   @OneToMany(() => Orders, (order) => order.user)
-   @JoinColumn({name: 'order_id'})
-    orders!: Orders[];
+  @Column({
+    default:false,
+  })
+  isAdmin!: boolean;
+
+  @OneToMany(() => Orders, (order) => order.user)
+  @JoinColumn({ name: 'order_id' })
+  orders!: Orders[];
 }

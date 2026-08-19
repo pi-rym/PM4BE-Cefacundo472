@@ -1,4 +1,3 @@
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/users.entity';
@@ -23,7 +22,7 @@ export class UsersRepository {
     return allUsers.map(({ password, ...userNoPasword }) => userNoPasword);
   }
 
-  async getUserById(id: string): Promise<Omit<Users, 'password'>> {
+  async getUserById(id: string): Promise<Omit<Users, 'password' | 'isAdmin'>> {
     const foundUser = await this.ormUsersRepository.findOne({
       where: { id },
       relations: {
@@ -38,9 +37,9 @@ export class UsersRepository {
     if (!foundUser) {
       throw new NotFoundException(`No se encontró el usuario con id ${id}`);
     }
-    
-    const { password, ...userNoPassword } = foundUser;
-    return userNoPassword;
+
+    const { password, isAdmin, ...filteredUser } = foundUser;
+    return filteredUser;
   }
 
   async getUserByEmail(email: string): Promise<Users | null> {
@@ -57,7 +56,7 @@ export class UsersRepository {
     newUserData: Users,
   ): Promise<Omit<Users, 'password'>> {
     const user = await this.ormUsersRepository.findOneBy({ id });
-    
+
     if (!user) {
       throw new NotFoundException(`No existe usuario con id ${id}`);
     }
@@ -65,17 +64,14 @@ export class UsersRepository {
     const mergedUser = this.ormUsersRepository.merge(user, newUserData);
     const savedUser = await this.ormUsersRepository.save(mergedUser);
     const { password, ...userNoPassword } = savedUser;
-    
+
     return userNoPassword;
   }
 
   //async deleteUser(id: string): Promise<string> {
-    //const foundUser = await this.ormUsersRepository.findOneBy({ id });
-    //if (!foundUser) throw new Error(`No existe usuario con id ${id}`);
-    //await this.ormUsersRepository.remove(foundUser);
-    //return foundUser.id;
+  //const foundUser = await this.ormUsersRepository.findOneBy({ id });
+  //if (!foundUser) throw new Error(`No existe usuario con id ${id}`);
+  //await this.ormUsersRepository.remove(foundUser);
+  //return foundUser.id;
   //}
-
-
-
 }

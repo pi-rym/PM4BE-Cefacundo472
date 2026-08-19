@@ -9,10 +9,6 @@ import { CloudinaryConfig } from '../config/cloudinary'; // <--- 1. Importa tu c
 @Module({
   imports: [TypeOrmModule.forFeature([Products])],
   controllers: [FileUploadController],
-  providers: [
-    FileUploadService, 
-    FileUploadRepository,
-    CloudinaryConfig, 
-  ],
+  providers: [FileUploadService, FileUploadRepository, CloudinaryConfig],
 })
 export class FileUploadModule {}

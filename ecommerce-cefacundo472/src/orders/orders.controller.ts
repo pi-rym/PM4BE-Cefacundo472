@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/orders.dto';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Controller('orders')
 export class OrdersController {
@@ -12,6 +21,7 @@ export class OrdersController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   addOrder(@Body() newOrderData: CreateOrderDto) {
     return this.ordersService.addOrder(newOrderData);
   }

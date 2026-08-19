@@ -10,11 +10,7 @@ export class FileUploadRepository {
         { resource_type: 'auto' },
         (error, result) => {
           if (error) {
-            reject(
-              error || new Error(
-                'Error al cargar imagen en Cloudinary'
-              )
-            );
+            reject(error || new Error('Error al cargar imagen en Cloudinary'));
           } else {
             resolve(result!);
           }

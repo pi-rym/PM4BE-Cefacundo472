@@ -6,13 +6,12 @@ import { environment } from './config/enviroment';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe( {whitelist:true}));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const PORT = Number(environment.port);
   const HOST = environment.host;
 
-
- await app.listen(PORT);
+  await app.listen(PORT);
 
   console.log(`Servidor escuchando en http://${HOST}:${PORT}/`);
 }

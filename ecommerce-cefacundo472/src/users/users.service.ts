@@ -4,29 +4,25 @@ import { CreateUserDto } from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
-    constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
-
-
-   getAllUsers(validPage: number, validLimit: number): any {
+  getAllUsers(validPage: number, validLimit: number): any {
     return this.usersRepository.getAllUsers(validPage, validLimit);
-   }
+  }
 
-   getUserById(id: string){
-    return this.usersRepository.getUserById(id)
-   }
+  getUserById(id: string) {
+    return this.usersRepository.getUserById(id);
+  }
 
-   addUser(newUser:CreateUserDto) {
-    return this.usersRepository.addUser(newUser);
-   }
+ // addUser(newUser: CreateUserDto) {
+   // return this.usersRepository.addUser(newUser);
+  //}
 
-   updateUser(id: string, userNewData:any){
+  updateUser(id: string, userNewData: any) {
     return this.usersRepository.updateUser(id, userNewData);
-   }
+  }
 
-   //deleteUser(id:string){
-    //return this.usersRepository.deleteUser(id);
-   //}
-
+  //deleteUser(id:string){
+  //return this.usersRepository.deleteUser(id);
+  //}
 }
-

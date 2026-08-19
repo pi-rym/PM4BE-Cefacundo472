@@ -13,10 +13,10 @@ const config = {
   migrations: ['dist/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
   synchronize: true,
-  logging: false,                                                                                                                                          
-  dropSchema: true, // ¡Pasar a falso en producción!
+  logging: false,
+  dropSchema: false, // ¡Pasar a falso en producción!
 };
 
 export default registerAs('typeorm', () => config);
 
-export const connectionSource = new DataSource(config as DataSourceOptions);
+export const connectionSource = new DataSource(config);
