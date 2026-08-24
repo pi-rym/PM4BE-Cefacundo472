@@ -63,7 +63,7 @@ export class CreateUserDto {
   city!: string;
   
   @IsEmpty()
-  isAdmin!: boolean;
+  isAdmin?: boolean;
 }
 
 export class LoginUserDto extends PickType(CreateUserDto, [

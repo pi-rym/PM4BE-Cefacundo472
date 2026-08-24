@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Categories } from '../categories/entity/categories.entity';
 import { Products } from './entities/products.entity';
-import { allProducts } from '../../utils/data';
+import { Orders } from '../orders/entities/orders.entity';
 import { Repository } from 'typeorm';
+import { allProducts } from '../../utils/data';
 
 @Injectable()
 export class ProductsRepository {
@@ -12,6 +13,8 @@ export class ProductsRepository {
     private ormProductsRepository: Repository<Products>,
     @InjectRepository(Categories)
     private ormCategoriesRepository: Repository<Categories>,
+    @InjectRepository(Orders)
+    private ormOrdersRepository: Repository<Orders>, 
   ) {}
 
   async getAllProducts(page: number, limit: number): Promise<Products[]> {
@@ -27,6 +30,13 @@ export class ProductsRepository {
   }
 
   async addProducts(): Promise<string> {
+    const existingOrders = await this.ormOrdersRepository.find();
+    if (existingOrders.length > 0) {
+      throw new BadRequestException(
+        'Existen órdenes registradas en el sistema.',
+      );
+    }
+
     const categories = await this.ormCategoriesRepository.find();
 
     await Promise.all(
