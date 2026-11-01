@@ -1,6 +1,6 @@
 import { allProducts } from '../../utils/data';
 import { Categories } from './entity/categories.entity';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -14,6 +14,14 @@ export class CategoriesRepository {
   async getAllCategories(): Promise<Categories[]> {
     return await this.ormCategoriesRepository.find();
   }
+
+  async getCategoryById(id: string) {
+  const category = await this.ormCategoriesRepository.findOneBy({ id });
+  if (!category) {
+    throw new NotFoundException(`Categoría con id ${id} no encontrada`);
+  }
+  return category;
+}
 
   async addCategories(): Promise<string> {
     try {

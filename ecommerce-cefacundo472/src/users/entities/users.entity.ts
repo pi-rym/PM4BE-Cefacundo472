@@ -4,6 +4,7 @@ import {
   JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Orders } from '../../orders/entities/orders.entity';
 
@@ -66,6 +67,13 @@ export class Users {
     default:false,
   })
   isAdmin!: boolean;
+
+  @DeleteDateColumn({
+    name: 'deleted_at',
+    type: 'timestamp',
+    nullable: true,
+  })
+  deletedAt?: Date;
 
   @OneToMany(() => Orders, (order) => order.user)
   @JoinColumn({ name: 'order_id' })

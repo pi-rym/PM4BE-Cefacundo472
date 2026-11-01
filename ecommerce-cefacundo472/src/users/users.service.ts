@@ -14,15 +14,15 @@ export class UsersService {
     return this.usersRepository.getUserById(id);
   }
 
- // addUser(newUser: CreateUserDto) {
-   // return this.usersRepository.addUser(newUser);
-  //}
+  // addUser(newUser: CreateUserDto) {
+  //   return this.usersRepository.addUser(newUser);
+  // }
 
   updateUser(id: string, userNewData: any) {
     return this.usersRepository.updateUser(id, userNewData);
   }
 
-  //deleteUser(id:string){
-  //return this.usersRepository.deleteUser(id);
-  //}
+  async deleteUser(id: string) {
+    return await this.usersRepository.deleteUser(id);
+  }
 }

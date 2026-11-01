@@ -7,6 +7,11 @@ export class CategoriesService {
 
   getAllCategories() {
     return this.categoriesRepository.getAllCategories();
+
+  }
+
+  getCategoriesById(id:string){
+    return this.categoriesRepository.getCategoryById(id);
   }
 
   addCategories() {

@@ -45,6 +45,12 @@ export class UsersController {
   //addUsser(@Body() newUser: CreateUserDto) {
     //return this.usersService.addUser(newUser);
   //}
+   //@Get()  
+    //async getUserByCountry(@Query('country')country?:string){
+      
+      //return await.UsersService.getUserByCountry(country);
+   //}//ejerciciio extra 
+     
 
   @Put(':id')
   @UseGuards(AuthGuard)
@@ -52,9 +58,10 @@ export class UsersController {
     return this.usersService.updateUser(id, userNewData);
   }
 
-  //@Delete(':id')
-  //@UseGuards(AuthGuard)
-  //deleteUser(@Param('id', ParseUUIDPipe) id: string) {
-  //    return this.usersService.deleteUser(id);
-  //}
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.deleteUser(id);
+  }
+
 }

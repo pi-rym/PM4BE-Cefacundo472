@@ -18,5 +18,5 @@ export class CreateOrderDto {
   })
   @IsArray({ message: 'La lista de productos debe ser un array' })
   @ArrayMinSize(1, { message: 'Debe haber al menos un producto' })
-  products!: Partial<Products[]>;
+  products!: Partial<Products>[];
 }

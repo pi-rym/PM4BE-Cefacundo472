@@ -68,10 +68,13 @@ export class UsersRepository {
     return userNoPassword;
   }
 
-  //async deleteUser(id: string): Promise<string> {
-  //const foundUser = await this.ormUsersRepository.findOneBy({ id });
-  //if (!foundUser) throw new Error(`No existe usuario con id ${id}`);
-  //await this.ormUsersRepository.remove(foundUser);
-  //return foundUser.id;
-  //}
+  async deleteUser(id: string) {
+    const result = await this.ormUsersRepository.softDelete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+
+    return { message: `Usuario con ID ${id} eliminado correctamente (soft delete)` };
+  }
 }
