@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn, 
   Entity,
   JoinColumn,
   ManyToMany,
@@ -76,6 +77,18 @@ export class Products {
     default: 'https://via.placeholder.com/150',
   })
   imgUrl!: string;
+
+  
+  @ApiProperty({
+    example: '2026-11-03T01:18:08.000Z',
+    description: 'Fecha de eliminación lógica del producto',
+    required: false,
+  })
+  @DeleteDateColumn({
+    name: 'deletedAt',
+    nullable: true,
+  })
+  deletedAt!: Date;
 
   @ManyToOne(() => Categories, (category) => category.products)
   @JoinColumn({ name: 'category_id' })

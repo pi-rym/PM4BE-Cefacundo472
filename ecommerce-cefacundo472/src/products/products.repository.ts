@@ -99,7 +99,9 @@ export class ProductsRepository {
       );
     }
 
-    await this.ormProductsRepository.delete(id);
+    
+    await this.ormProductsRepository.softDelete(id);
+    
     return product.id;
   }
 }
